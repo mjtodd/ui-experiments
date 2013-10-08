@@ -41,7 +41,7 @@
 
 (defn render-data [state]
 	(.html ($ "#result") 
-    (crate/html [:div [:p "result" state]])
+    (crate/html [:div [:p "r:" (:msg state) ]])
     )
 	)
 
@@ -62,13 +62,12 @@
 	(.log js/console "begin")
 	(let [btn-click (event-chan :click "#btn" :testmsg)]
 		(go
-			(loop [state 0]
+			(loop [state {:msg ""}]
 				(render-data state)
 				(let [[msg-type msg-data] (<! btn-click)]
 					(.log js/console (str msg-type))
-					)
-        (.log js/console "you said", (<! (ask)))
-				(recur (inc state))
+					)        
+				(recur (assoc state :msg (<! (ask)) ))
 				)
 			)
 		))
